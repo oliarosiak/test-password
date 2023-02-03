@@ -1,63 +1,93 @@
 const inputField = document.querySelector('#user_password');
-const output = document.querySelector(".output");
+const passwordStatus = document.querySelector(".output");
 
-const list = document.querySelector('.list');
+const firstBlock = document.querySelector('.first_block');
+const secondBlock = document.querySelector('.second_block');
+const thirdBlock = document.querySelector('.third_block');
+const allBlocks = document.querySelectorAll('.block');
 
-const firstBlock = list.firstElementChild;
-const secondBlock = firstBlock.nextElementSibling;
-const allThreeBlocks = document.querySelectorAll('li');
+const letters = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
+const digits = '1234567890';
+const symbols = '!@#$%^&*()_-+=\|/.,:;[]{}';
 
-if (inputField.value === 0) {
-    console.log(allThreeBlocks);
-    allThreeBlocks.forEach(element => {
-        element.classList.remove('short');
-        element.classList.remove('medium');
-        element.classList.remove('hard');  
-    })
-}
 
 
 inputField.addEventListener('input', passwordInput);
 
 function passwordInput() {
-    const entered = inputField.value;
-    const minLength = 8;
-    const mediumLength = 13;
-    const hardLength = 15;
-    const maxLength = 17;
+    const entered = inputField.value;   
 
-    output.textContent = entered;
+    let isLetters = false;
+    let isDigits = false;
+    let isSymbols = false;
+    
+    for (let i = 0; i < entered.length; i += 1){
+        if (!isLetters && letters.indexOf(entered[i]) != -1) {
+            isLetters = true;
+        } else if (!isDigits && digits.indexOf(entered[i]) != -1) {
+            isDigits = true;
+        } else if (!isSymbols && symbols.indexOf(entered[i]) != -1) {
+            isSymbols = true;
+        }
+    }
 
-    // if (inputField.value === 0) {
-    //     allThreeBlocks.forEach(element => {
-    //         console.log(element);
-    //         element.classList.remove('short');
-    //         // element.classList.remove('medium');
-    //         // element.classList.remove('hard');  
-    //     })
-    // }
+    let rating = 0;
 
+    if (isLetters) {
+        rating += 1;
+    }
+    
+    if (isSymbols) {
+        rating += 1;
+    }
+    
+    if (isDigits) {
+        rating += 1;
+    }
 
-    if (entered.length> 0 && entered.length < minLength) {
-        allThreeBlocks.forEach(element => {
-            element.classList.add('short');
-        })
-    } else if(entered.length > minLength) {
-        allThreeBlocks.forEach(element => {
-            element.classList.remove('short');
-        })
-        firstBlock.classList.add('short');
-    } else if(entered.length > mediumLength) {
-        allThreeBlocks.forEach(element => {
-            element.classList.remove('short');
+    reset();
+
+    console.log(entered.length, 'довжина', rating, 'рейтинг');
+
+    if (entered.length > 0 && inputField.value.length <= 8) {
+        allBlocks.forEach(element => {
+            element.style.backgroundColor = 'red';
         });
-        firstBlock.classList.add('medium');
-        secondBlock.classList.add('medium');
-    } else if(entered.length > hardLength) {
-        allThreeBlocks.forEach(element => {
-            element.classList.add('hard');
+        passwordStatus.textContent = 'Пароль занадто короткий. Введіть більше 8 символів';
+    } else if (entered.length > 8 && rating === 1) {
+        clear();
+        firstBlock.style.backgroundColor = 'red';
+        passwordStatus.textContent = 'Пароль занадто легкий!';        
+    } else if (entered.length > 8 && rating === 2) {
+        clear();
+        firstBlock.style.backgroundColor = 'yellow';
+        secondBlock.style.backgroundColor = 'yellow';
+        passwordStatus.textContent = 'Пароль середньої складності!';
+    } else if (entered.length > 8 && rating === 3) {
+        allBlocks.forEach(element => {
+            element.style.backgroundColor = 'green';
         });
-    }  
+        passwordStatus.textContent = 'Надійний пароль!';
 
-  
+    }
+     
 }
+
+function reset() {
+    if (inputField.value.length === 0) {
+        allBlocks.forEach(element => {
+            element.style.backgroundColor = 'grey';
+        });
+        passwordStatus.textContent = '';
+    }    
+}
+
+function clear() {
+    allBlocks.forEach(element => {
+        element.style.backgroundColor = 'grey';
+    });
+}
+
+
+// commit
+
