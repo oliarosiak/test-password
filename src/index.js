@@ -89,5 +89,3 @@ function clear() {
 }
 
 
-// commit
-
